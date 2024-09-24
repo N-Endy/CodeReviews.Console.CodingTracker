@@ -7,13 +7,13 @@ namespace CodingTracker.Controllers
 {
     public class CodingSessionController
     {
-        private readonly IUserInteraction? _userInteraction;
+        private readonly IUserInteraction _userInteraction;
         private readonly ICodingSessionService _sessionService;
         private readonly IDataConfig _dataConfig;
         readonly CodingSession codingSession = new();
         bool closeApp;
 
-        public CodingSessionController(IUserInteraction? userInteraction, ICodingSessionService sessionService, IDataConfig dataConfig)
+        public CodingSessionController(IUserInteraction userInteraction, ICodingSessionService sessionService, IDataConfig dataConfig)
         {
             _userInteraction = userInteraction;
             _sessionService = sessionService;
@@ -31,7 +31,7 @@ namespace CodingTracker.Controllers
                 // Display Menu
                 _userInteraction?.DisplayMenu();
                 // Get User Input
-                var userInput = _userInteraction?.GetUserInput();
+                var userInput = _userInteraction?.GetUserInput() ?? "";
                 // Process User Input
                 SelectUserInput(userInput);
             }

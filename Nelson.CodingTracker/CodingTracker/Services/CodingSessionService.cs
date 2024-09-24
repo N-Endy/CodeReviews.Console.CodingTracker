@@ -26,12 +26,27 @@ namespace CodingTracker.Services
             GetAllSessions();
 
             _userInteraction.ShowMessageTimeout("\n\n[Red]Please type the ID of the session to delete or 0 to return to Main Menu: [/]");
+            int outId;
+            bool isValid;
+            do
+            {
+                _userInteraction.ShowMessage("[Green]Please enter a number (must be an integer and >= 0):[/]");
+                string id = _userInteraction.GetUserInput();
 
-            int id = _utils.ConvertToInt(_userInteraction.GetUserInput());
+                // Try to parse the input to an integer
+                isValid = int.TryParse(id, out outId);
 
-            if (id == 0) return;
+                // Check if the input is a valid integer and greater than or equal to 0
+                if (!isValid || outId < 0)
+                {
+                    _userInteraction.ShowMessage("[Red]Invalid input. Please enter a valid integer that is >= 0.[/]");
+                    isValid = false;
+                }
 
-            _sessionRepository.DeleteSessionFromDatabase(id);
+            } while (!isValid);
+            if (outId == 0) return;
+
+            _sessionRepository.DeleteSessionFromDatabase(outId);
         }
 
         public void GetAllSessions()
@@ -54,11 +69,27 @@ namespace CodingTracker.Services
             // Show table of sessions
             GetAllSessions();
 
-            _userInteraction?.ShowMessageTimeout("\n\n[Yellow]Please type the ID of the session you would like to update. Type 0 to return to Main Menu: [/]");
+            _userInteraction.ShowMessageTimeout("\n\n[Yellow]Please type the ID of the session you would like to update. Type 0 to return to Main Menu: [/]");
 
-            int id = _utils.ConvertToInt(_userInteraction.GetUserInput());
+            int outId;
+            bool isValid;
+            do
+            {
+                _userInteraction.ShowMessage("[Green]Please enter a number (must be an integer and >= 0):[/]");
+                string id = _userInteraction.GetUserInput();
 
-            if (id == 0) return;
+                // Try to parse the input to an integer
+                isValid = int.TryParse(id, out outId);
+
+                // Check if the input is a valid integer and greater than or equal to 0
+                if (!isValid || outId < 0)
+                {
+                    _userInteraction.ShowMessage("[Red]Invalid input. Please enter a valid integer that is >= 0.[/]");
+                    isValid = false;
+                }
+
+            } while (!isValid);
+            if (outId == 0) return;
 
             _userInteraction.ShowMessage("\n[Yellow]Which property would you like to update[/]");
             _userInteraction.ShowMessage("\n[DarkGreen]1. Start Time[/]");
@@ -69,14 +100,14 @@ namespace CodingTracker.Services
             {
                 case "1":
                     DateTime startTime = _utils.ValidatedStartTime();
-                    _sessionRepository.UpdateStartTimeInDatabase(id, startTime);
+                    _sessionRepository.UpdateStartTimeInDatabase(outId, startTime);
                     break;
                 case "2":
                     DateTime endTime = _utils.ValidatedEndTime();
-                    _sessionRepository.UpdateEndTimeInDatabase(id, endTime);
+                    _sessionRepository.UpdateEndTimeInDatabase(outId, endTime);
                     break;
                 default:
-                    _userInteraction.ShowMessageTimeout("\n[Red]You have inputed a wrong choice. Going back to Menu[/]\n");
+                    _userInteraction.ShowMessageTimeout("\n[Red]You have inputted a wrong choice. Going back to Menu[/]\n");
                     break;
             }
         }
@@ -115,9 +146,19 @@ namespace CodingTracker.Services
 
             _userInteraction.ShowMessage("\n[Green]Which period do you want to filter by? (days, hours, minutes)[/]. Press '0' to exit: ");
 
-            string period = _userInteraction.GetUserInput();
+            string period = "";
 
-            if (period == "0") return;
+            do
+            {
+                period = _userInteraction.GetUserInput().ToLower();
+                if (period == "0") return; // Exit if '0' is pressed
+
+                if (period != "days" && period != "hours" && period != "minutes")
+                {
+                    _userInteraction.ShowMessage("\n[Red]Invalid input. Please enter 'days', 'hours', or 'minutes': [/]");
+                }
+
+            } while (period != "days" && period != "hours" && period != "minutes");
 
             switch (period)
             {
